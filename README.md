@@ -44,7 +44,11 @@ OpenDart-MCP를 Claude Desktop에서 사용하기 위한 단계별 설정 방법
 
 ### 2. Docker 이미지 빌드
 
-터미널(명령 프롬프트)을 열고 다음 명령어를 실행하세요:
+
+```bash
+# 1. 깃허브 복사하기
+git clone https://github.com/keonho-kim/OpenDart-mcp.git
+```
 
 ```bash
 # 1. 프로젝트 폴더로 이동
@@ -128,10 +132,6 @@ Claude Desktop에서 다음과 같이 테스트해보세요:
 #### Docker 관련 오류
 - Docker가 실행 중인지 확인하세요
 - Docker Desktop을 관리자 권한으로 실행해보세요
-
-#### API 키 관련 오류
-- DART API 키가 올바른지 확인하세요
-- API 키에 특수문자가 포함되어 있지 않은지 확인하세요
 
 #### 설정 파일 관련 오류
 - JSON 문법이 올바른지 확인하세요 (쉼표, 따옴표 등)

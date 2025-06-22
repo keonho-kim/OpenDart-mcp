@@ -24,6 +24,115 @@ OpenDart-MCP는 MCP를 통해 다음과 같은 상세한 금융 정보 조회 �
 *   `get_people_summary.py`: 임원 및 직원 현황 조회
 *   `get_stock_summary.py`: 주식 총수 현황 조회
 
-## 라이선스
+## MCP 설정 가이드
 
-본 프로젝트는 MIT 라이선스를 따릅니다.
+OpenDart-MCP를 Claude Desktop에서 사용하기 위한 단계별 설정 방법입니다.
+
+### 1. 사전 준비사항
+
+#### 1.1 DART API 키 발급
+1. [DART 전자공시시스템](https://dart.fss.or.kr/) 접속
+2. 우상단 '오픈API' 클릭
+3. 'API 신청' → '개발자 등록' 진행
+4. 개인정보 입력 후 API 키 발급 (이메일로 전송됨)
+5. 발급받은 API 키를 메모장에 저장해 두세요
+
+#### 1.2 Docker 설치
+- **Windows**: [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/) 다운로드 및 설치
+- **macOS**: [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/) 다운로드 및 설치
+- **Linux**: 배포판에 맞는 [Docker 설치 가이드](https://docs.docker.com/engine/install/) 참조
+
+### 2. Docker 이미지 빌드
+
+터미널(명령 프롬프트)을 열고 다음 명령어를 실행하세요:
+
+```bash
+# 1. 프로젝트 폴더로 이동
+cd OpenDart-mcp
+
+# 2. Docker 이미지 빌드
+docker build -t opendart-mcp .
+```
+
+> **참고**: 빌드 과정은 몇 분 정도 소요될 수 있습니다.
+
+### 3. Claude Desktop 설정
+
+#### 3.1 설정 파일 찾기
+운영체제별 Claude Desktop 설정 파일 위치:
+
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+#### 3.2 설정 파일 수정
+1. 위 경로의 설정 파일을 텍스트 에디터로 열기 (파일이 없다면 새로 생성)
+2. 다음 내용을 추가하거나 기존 내용을 수정:
+
+```json
+{
+  "mcpServers": {
+    "opendart-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--net=host",
+        "-e",
+        "DART_API_KEY=<PUT_YOUR_DART_API_KEY>",
+        "opendart-mcp"
+      ]
+    }
+  }
+}
+```
+
+3. `<PUT_YOUR_DART_API_KEY>` 부분을 1단계에서 발급받은 실제 API 키로 교체
+   - 예시: `"DART_API_KEY=1234567890abcdef1234567890abcdef12345678"`
+
+#### 3.3 설정 파일 예시 (완성된 형태)
+```json
+{
+  "mcpServers": {
+    "opendart-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--net=host",
+        "-e",
+        "DART_API_KEY=1234567890abcdef1234567890abcdef12345678",
+        "opendart-mcp"
+      ]
+    }
+  }
+}
+```
+
+### 4. Claude Desktop 재시작
+
+설정 파일을 저장한 후 Claude Desktop을 완전히 종료하고 다시 실행하세요.
+
+### 5. 사용 확인
+
+Claude Desktop에서 다음과 같이 테스트해보세요:
+
+```
+삼성전자의 2023년 사업보고서를 조회해주세요.
+```
+
+### 문제 해결
+
+#### Docker 관련 오류
+- Docker가 실행 중인지 확인하세요
+- Docker Desktop을 관리자 권한으로 실행해보세요
+
+#### API 키 관련 오류
+- DART API 키가 올바른지 확인하세요
+- API 키에 특수문자가 포함되어 있지 않은지 확인하세요
+
+#### 설정 파일 관련 오류
+- JSON 문법이 올바른지 확인하세요 (쉼표, 따옴표 등)
+- 설정 파일 경로가 정확한지 확인하세요
